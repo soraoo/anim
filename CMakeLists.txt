@@ -9,7 +9,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
-add_executable(anim src/main.cpp)
+set(GLFW_LIBRARY_TYPE SHARED)
+add_subdirectory(external/glfw-3.4 EXCLUDE_FROM_ALL)
+
+add_executable(anim 
+    src/main.cpp
+    src/engine/glad/glad.c
+)
+
+target_link_libraries(anim PRIVATE glfw)
 
 set_target_properties(anim PROPERTIES
     CXX_STANDARD 17
