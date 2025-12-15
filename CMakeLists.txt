@@ -12,12 +12,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(GLFW_LIBRARY_TYPE SHARED)
 add_subdirectory(external/glfw-3.4 EXCLUDE_FROM_ALL)
 
+set(SPDLOG_BUILD_SHARED ON)
+add_subdirectory(external/spdlog EXCLUDE_FROM_ALL)
+
 add_executable(anim 
     src/main.cpp
     src/engine/glad/glad.c
+    src/engine/app/app.cpp
 )
 
-target_link_libraries(anim PRIVATE glfw)
+target_link_libraries(anim PRIVATE glfw spdlog::spdlog)
 
 set_target_properties(anim PROPERTIES
     CXX_STANDARD 17
@@ -29,7 +33,7 @@ set_target_properties(anim PROPERTIES
 if (MSVC)
     target_compile_options(anim PRIVATE /W4)
 else()
-    target_compile_options(anim PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(anim PRIVATE -Wall)
 endif()
 
 if (XCODE)

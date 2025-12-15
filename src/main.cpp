@@ -1,6 +1,7 @@
-#include <iostream>
+#include "engine/app/app.h"
 
 int main() {
-    std::cout << "Hello, world." << std::endl;
+    engine::App app;
+    app.run();
     return 0;
 }
