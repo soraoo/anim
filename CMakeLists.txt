@@ -64,6 +64,7 @@ set(BUILD_SHARED_LIBS ${_PREV_BUILD_SHARED_LIBS})
 add_executable(anim 
     src/main.cpp
     src/glad/glad.c
+    src/app/app.cpp
 )
 
 target_link_libraries(anim PRIVATE
