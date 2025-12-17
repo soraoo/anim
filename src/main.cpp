@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
+#include <webgpu/webgpu_cpp.h>
 
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
@@ -8,6 +9,9 @@ int main() {
 
     spdlog::set_level(spdlog::level::info);
     spdlog::info("Hello, world.");
+
+    wgpu::InstanceDescriptor instance_desc{};
+    auto instance = wgpu::CreateInstance(&instance_desc);
 
     auto is_running = true;
     while (is_running) {
