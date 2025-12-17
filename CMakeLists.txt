@@ -11,10 +11,17 @@ project(
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+if(WIN32)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        add_compile_definitions(NOMINMAX)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fms-extensions -fms-compatibility")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_HAS_AUTO_PTR_ETC=1")
+    endif()
+endif()
 
 
 # ====================================
@@ -26,8 +33,12 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
+set(_PREV_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+set(_PREV_CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+
 # 都使用静态链接
 set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_BUILD_TYPE Release)
 
 # SDL3
 set(SDL_TEST_LIBRARY OFF)
@@ -50,6 +61,25 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(spdlog)
 
+# dawn
+set(DAWN_FETCH_DEPENDENCIES ON)
+set(TINT_BUILD_TESTS OFF)
+set(DAWN_BUILD_TESTS OFF)
+set(DAWN_SKIP_GOOGLETEST ON)
+FetchContent_Declare(
+    dawn
+    GIT_REPOSITORY "https://github.com/google/dawn.git"
+    GIT_TAG "v20251216.160840"
+    GIT_SHALLOW ON
+    GIT_PROGRESS ON
+    GIT_SUBMODULES ""
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(dawn)
+
+set(BUILD_SHARED_LIBS ${_PREV_BUILD_SHARED_LIBS})
+set(CMAKE_BUILD_TYPE ${_PREV_CMAKE_BUILD_TYPE})
+
 
 # ====================================
 # 目标配置
@@ -57,7 +87,6 @@ FetchContent_MakeAvailable(spdlog)
 
 add_executable(anim 
     src/main.cpp
-    src/glad/glad.c
 )
 
 target_link_libraries(anim PRIVATE
