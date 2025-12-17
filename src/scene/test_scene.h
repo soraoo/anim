@@ -1,3 +1,5 @@
+#pragma once
+
 #include "scene.h"
 
 class TestScene final : public SceneBase {
