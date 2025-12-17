@@ -15,9 +15,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
-if(WIN32)
-    add_compile_definitions(NOMINMAX)
-endif()
 
 
 # ====================================
@@ -57,19 +54,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(spdlog)
 
-# dawn
-set(DAWN_FETCH_DEPENDENCIES ON)
-FetchContent_Declare(
-    dawn
-    GIT_REPOSITORY "https://github.com/google/dawn.git"
-    GIT_TAG "v20251216.160840"
-    GIT_SHALLOW ON
-    GIT_PROGRESS ON
-    GIT_SUBMODULES ""
-    EXCLUDE_FROM_ALL
-)
-FetchContent_MakeAvailable(dawn)
-
 set(BUILD_SHARED_LIBS ${_PREV_BUILD_SHARED_LIBS})
 
 
@@ -79,12 +63,12 @@ set(BUILD_SHARED_LIBS ${_PREV_BUILD_SHARED_LIBS})
 
 add_executable(anim 
     src/main.cpp
+    src/glad/glad.c
 )
 
 target_link_libraries(anim PRIVATE
     SDL3::SDL3
     spdlog::spdlog_header_only
-    dawn::webgpu_dawn
 )
 
 if(MSVC)
