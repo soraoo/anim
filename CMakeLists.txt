@@ -65,6 +65,8 @@ add_executable(anim
     src/main.cpp
     src/glad/glad.c
     src/app/app.cpp
+    src/scene/scene.cpp
+    src/scene/test_scene.cpp
 )
 
 target_link_libraries(anim PRIVATE

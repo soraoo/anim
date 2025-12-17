@@ -5,7 +5,9 @@
 
 #include "../glad/glad.h"
 
-App::App() : _is_running(false), _window(nullptr), _gl_context(nullptr) {}
+App::App()
+    : _is_running{false}, _window{nullptr}, _gl_context{nullptr},
+      _scene_handler{nullptr} {}
 
 App::~App() {
     if (_is_running) {
@@ -14,10 +16,12 @@ App::~App() {
     }
 }
 
-void App::run() {
+void App::run(SceneBase* start_scene) {
     if (!init()) {
         return;
     }
+
+    _scene_handler->switch_scene(start_scene);
 
     while (_is_running) {
         handle_events();
@@ -40,6 +44,10 @@ bool App::init() {
     }
 
     if (!init_gl()) {
+        return false;
+    }
+
+    if (!init_handlers()) {
         return false;
     }
 
@@ -93,6 +101,12 @@ bool App::init_gl() {
         reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress));
 }
 
+bool App::init_handlers() {
+    _scene_handler = std::make_unique<SceneHandler>();
+
+    return true;
+}
+
 void App::handle_events() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -100,13 +114,21 @@ void App::handle_events() {
             _is_running = false;
         }
     }
+
+    _scene_handler->handle_events(event);
 }
 
-void App::update(float dt) {}
+void App::update(float dt) { _scene_handler->update(dt); }
 
-void App::render() { SDL_GL_SwapWindow(_window); }
+void App::render() {
+    _scene_handler->render();
+
+    SDL_GL_SwapWindow(_window);
+}
 
 void App::clean() {
+    _scene_handler->clean();
+
     if (_gl_context) {
         SDL_GL_DestroyContext(_gl_context);
         _gl_context = nullptr;
