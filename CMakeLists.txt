@@ -57,6 +57,7 @@ FetchContent_MakeAvailable(spdlog)
 
 add_executable(anim 
     src/main.cpp
+    src/glad/glad.c
 )
 
 target_link_libraries(anim PRIVATE
