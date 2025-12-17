@@ -42,6 +42,7 @@ FetchContent_Declare(
     GIT_TAG "release-3.2.28"
     GIT_SHALLOW ON
     GIT_PROGRESS ON
+    EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(SDL3)
 
@@ -52,6 +53,7 @@ FetchContent_Declare(
     GIT_TAG "v1.16.0"
     GIT_SHALLOW ON
     GIT_PROGRESS ON
+    EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(spdlog)
 
