@@ -1,3 +1,7 @@
+# ====================================
+# 项目配置
+# ====================================
+
 cmake_minimum_required(VERSION 3.15)
 project(
     anim 
@@ -6,39 +10,67 @@ project(
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
-set(GLFW_LIBRARY_TYPE SHARED)
-add_subdirectory(external/glfw-3.4 EXCLUDE_FROM_ALL)
 
-set(SPDLOG_BUILD_SHARED ON)
-add_subdirectory(external/spdlog EXCLUDE_FROM_ALL)
+# ====================================
+# 依赖管理
+# ====================================
+
+include(FetchContent)
+
+set(FETCHCONTENT_QUIET OFF)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+
+# 都使用静态链接
+set(BUILD_SHARED_LIBS OFF)
+
+# SDL3
+set(SDL_TEST_LIBRARY OFF)
+FetchContent_Declare(
+    SDL3
+    GIT_REPOSITORY "https://github.com/libsdl-org/SDL.git"
+    GIT_TAG "release-3.2.28"
+    GIT_SHALLOW ON
+    GIT_PROGRESS ON
+)
+FetchContent_MakeAvailable(SDL3)
+
+# spdlog
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY "https://github.com/gabime/spdlog.git"
+    GIT_TAG "v1.16.0"
+    GIT_SHALLOW ON
+    GIT_PROGRESS ON
+)
+FetchContent_MakeAvailable(spdlog)
+
+
+# ====================================
+# 目标配置
+# ====================================
 
 add_executable(anim 
     src/main.cpp
-    src/engine/glad/glad.c
-    src/engine/app/app.cpp
 )
 
-target_link_libraries(anim PRIVATE glfw spdlog::spdlog)
-
-set_target_properties(anim PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
-    COMPILE_WARNING_AS_ERROR ON
+target_link_libraries(anim PRIVATE
+    SDL3::SDL3
+    spdlog::spdlog_header_only
 )
 
-if (MSVC)
-    target_compile_options(anim PRIVATE /W4)
+if(MSVC)
+    target_compile_options(anim PRIVATE
+        /W4
+    )
 else()
-    target_compile_options(anim PRIVATE -Wall)
-endif()
-
-if (XCODE)
-    set_target_properties(anim PROPERTIES
-        XCODE_GENERATE_SCHEME ON
-        XCODE_SCHEME_ENABLE_GPU_FRAME_CAPTURE_MODE "Metal"
+    target_compile_options(anim PRIVATE
+        -Wall 
+        -Wextra
     )
 endif()
