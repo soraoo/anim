@@ -146,7 +146,7 @@ inline Vec3 slerp(const Vec3& v1, const Vec3& v2, float t) {
     Vec3 to = normalized(v2);
 
     float cos = dot(from, to);
-    if (cos > 0.999f) {
+    if (cos > 1.0f - VEC3_EPSILON) {
         return nlerp(v1, v2, t);
     }
 
