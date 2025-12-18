@@ -39,12 +39,7 @@ struct Vec3 {
         return *this;
     }
 
-    Vec3& operator/=(float rhs) {
-        x /= rhs;
-        y /= rhs;
-        z /= rhs;
-        return *this;
-    }
+    Vec3& operator/=(float rhs) { return *this *= (1.0f / rhs); }
 };
 
 inline Vec3 operator+(const Vec3& lhs, const Vec3& rhs) {
@@ -59,9 +54,7 @@ inline Vec3 operator*(const Vec3& lhs, float rhs) {
     return Vec3(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
 }
 
-inline Vec3 operator/(const Vec3& lhs, float rhs) {
-    return Vec3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
-}
+inline Vec3 operator/(const Vec3& lhs, float rhs) { return lhs * (1.0f / rhs); }
 
 inline Vec3 operator-(const Vec3& v) { return Vec3(-v.x, -v.y, -v.z); }
 
@@ -84,14 +77,14 @@ inline float len(const Vec3& v) {
     return std::sqrt(len_sq);
 }
 
-inline Vec3& normalize(Vec3& v) {
+inline void normalize(Vec3& v) {
     float len_sq = ::len_sq(v);
     if (len_sq < VEC3_EPSILON) {
-        return v;
+        return;
     }
 
     float inv_len = 1.0f / std::sqrt(len_sq);
-    return v *= inv_len;
+    v *= inv_len;
 }
 
 inline Vec3 normalized(const Vec3& v) {
